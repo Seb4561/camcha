@@ -286,6 +286,16 @@
       </div>
     </section>
 
+    <script id="mcjs">
+        !function(c,h,i,m,p){
+            m=c.createElement(h),
+            p=c.getElementsByTagName(h)[0],
+            m.async=1,
+            m.src=i,
+            p.parentNode.insertBefore(m,p)
+        }(document,"script","https://chimpstatic.com/mcjs-connected/js/users/27785cb93ebbd4e432c04eadf/ddf7543891b955fdefe6d84f5.js");
+    </script>
+
     <script>
       // Smooth scrolling for navigation links (existing code, keep it)
       document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -311,25 +321,31 @@
 
       // Función para inicializar y mostrar el pop-up de Mailchimp
       function showMailchimpPopupManually() {
-          // Asegúrate de que el script de Mailchimp se haya cargado antes de intentar usarlo
-          if (typeof require !== 'undefined' && typeof mojo !== 'undefined' && typeof mojo.signup_forms !== 'undefined' && typeof mojo.signup_forms.Loader !== 'undefined') {
-              clearMailchimpCookies(); // Limpia las cookies antes de mostrar el pop-up
+          // Los valores "baseUrl", "uuid" y "lid" deben ser los de tu formulario pop-up de Mailchimp.
+          // Puedes copiarlos del script que Mailchimp te proporciona para "incrustar" el pop-up.
+          // Tu script mcjs usa "27785cb93ebbd4e432c04eadf" como UUID y "ddf7543891b955fdefe6d84f5" como LID.
+          // El "baseUrl" lo obtienes de la URL de tu cuenta de Mailchimp (ej. mc.us1.list-manage.com)
+          // Asumiré mc.us1.list-manage.com como un ejemplo, pero verifica el tuyo.
 
-              // Los valores "baseUrl", "uuid" y "lid" deben ser los de tu formulario pop-up de Mailchimp.
-              // Puedes copiarlos del script que Mailchimp te proporciona para "incrustar" el pop-up,
-              // o simplemente usar los que ya tienes en tu script original si son para este pop-up.
-              require(["mojo/signup-forms/Loader"], function(L) {
-                  L.start({
-                      "baseUrl":"mc.usX.list-manage.com", // <<-- IMPORTANTE: Cambia 'X' por el número de tu data center (ej. us1, us2, us3)
-                      "uuid":"27785cb93ebbd4e432c04eadf", // <<-- Este UUID debería coincidir con tu script mcjs
-                      "lid":"ddf7543891b955fdefe6d84f5"  // <<-- Este LID debería coincidir con tu script mcjs
+          clearMailchimpCookies(); // Limpia las cookies antes de mostrar el pop-up
+
+          // Intentar cargar el pop-up de Mailchimp
+          // Utilizamos un bucle de comprobación para asegurarnos de que el `require` de Dojo esté disponible
+          let checkMailchimpLoader = setInterval(function() {
+              if (typeof require !== 'undefined' && typeof mojo !== 'undefined' && typeof mojo.signup_forms !== 'undefined' && typeof mojo.signup_forms.Loader !== 'undefined') {
+                  clearInterval(checkMailchimpLoader); // Detener el chequeo una vez que se carga
+
+                  require(["mojo/signup-forms/Loader"], function(L) {
+                      L.start({
+                          "baseUrl":"mc.us1.list-manage.com", // <<-- IMPORTANTE: Cambia 'us1' por el número de tu data center real (ej. us1, us2, us3)
+                          "uuid":"27785cb93ebbd4e432c04eadf",
+                          "lid":"ddf7543891b955fdefe6d84f5"
+                      });
                   });
-              });
-          } else {
-              console.warn("Mailchimp Loader no está disponible. Asegúrate de que el script de Mailchimp está cargado.");
-              // Podrías añadir un fallback aquí, como abrir una nueva pestaña con el formulario de Mailchimp directo
-              // window.open('TU_URL_DIRECTA_DEL_FORMULARIO_MAILCHIMP', '_blank');
-          }
+              } else {
+                  console.log("Esperando que el Mailchimp Loader esté disponible...");
+              }
+          }, 100); // Chequea cada 100ms
       }
 
       // Añade un event listener al botón "Notifícame"
@@ -343,11 +359,6 @@
               });
           }
       });
-
-      // Asegúrate de que el script principal de Mailchimp se carga primero
-      // Muevo el script mcjs aquí, dentro del body, antes de tu script personalizado,
-      // para asegurar que 'require' y 'mojo' estén definidos cuando intentamos usarlos.
     </script>
-    <script id="mcjs">!function(c,h,i,m,p){m=c.createElement(h),p=c.getElementsByTagName(h)[0],m.async=1,m.src=i,p.parentNode.insertBefore(m,p)}(document,"script","https://chimpstatic.com/mcjs-connected/js/users/27785cb93ebbd4e432c04eadf/ddf7543891b955fdefe6d84f5.js");</script>
   </body>
 </html>
